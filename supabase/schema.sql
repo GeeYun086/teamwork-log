@@ -23,7 +23,7 @@ create table if not exists public.tasks (
   id uuid primary key default gen_random_uuid(), team_id uuid not null references public.teams on delete cascade,
   owner_id uuid not null references auth.users on delete cascade, title text not null,
   description text not null default '', week_no int not null check(week_no between 1 and 4),
-  status text not null default '예정' check(status in ('예정','진행 중','완료','막힘')),
+  status text not null default '예정' check(status in ('예정','진행 중','완료','대기')),
   today_note text not null default '', done_note text not null default '', blocker text not null default '',
   next_step text not null default '', due_date date, created_at timestamptz not null default now(), updated_at timestamptz not null default now()
 );
