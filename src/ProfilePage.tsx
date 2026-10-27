@@ -19,9 +19,10 @@ type Props = {
   onTogglePush: () => void
   onCopyInvite: () => void
   onRemoveMember: (member: Member) => void
+  onChangeRole: (member: Member, role: 'admin' | 'member') => void
 }
 
-export default function ProfilePage({ name, email, role, teamName, inviteCode, members, isAdmin, currentUserId, sessionActive, pushSupported, pushPermission, pushSubscribed, pushBusy, onTogglePush, onCopyInvite, onRemoveMember }: Props) {
+export default function ProfilePage({ name, email, role, teamName, inviteCode, members, isAdmin, currentUserId, sessionActive, pushSupported, pushPermission, pushSubscribed, pushBusy, onTogglePush, onCopyInvite, onRemoveMember, onChangeRole }: Props) {
   return <div className="content profile-content">
     <div className="page-heading">
       <div><div className="eyebrow">MY ACCOUNT</div><h1>{isAdmin ? '관리자 페이지' : '마이페이지'}</h1><p>내 계정 정보와 팀 공간 정보를 확인할 수 있어요.</p></div>
@@ -64,7 +65,7 @@ export default function ProfilePage({ name, email, role, teamName, inviteCode, m
         <div className="managed-member-list">{members.map(member => <article className="managed-member" key={member.user_id}>
           <div className="avatar">{member.display_name.slice(0, 1)}</div>
           <div className="managed-member-info"><b>{member.display_name}{member.user_id === currentUserId && <em>나</em>}</b><small>{member.role === 'admin' ? '관리자' : '팀원'}</small></div>
-          {member.role === 'admin' ? <span className="managed-role">관리자</span> : <button className="button outline small remove-member" onClick={() => onRemoveMember(member)}><Trash2 size={14}/> 팀원 내보내기</button>}
+          {member.user_id === currentUserId ? <span className="managed-role">내 관리자 권한</span> : <div className="managed-member-actions"><select className="role-select" aria-label={`${member.display_name} 권한`} value={member.role} onChange={event => onChangeRole(member, event.target.value as 'admin' | 'member')}><option value="member">팀원</option><option value="admin">관리자</option></select><button className="button outline small remove-member" onClick={() => onRemoveMember(member)}><Trash2 size={14}/> 내보내기</button></div>}
         </article>)}</div>
         <p className="profile-note">팀원을 내보내면 해당 계정은 이 팀 공간에 다시 초대받기 전까지 접근할 수 없습니다. 업무 기록은 유지됩니다.</p>
       </section>
