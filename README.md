@@ -15,7 +15,7 @@ npm run dev
 
 1. [Supabase](https://supabase.com/)에서 프로젝트를 생성합니다.
 2. 프로젝트의 **SQL Editor**에서 `supabase/schema.sql` 전체를 실행합니다. 기본 테이블, 팀 합류 함수, 접근 정책, 비공개 사진 버킷이 준비됩니다.
-3. 같은 SQL Editor에서 기존 마이그레이션을 순서대로 실행한 뒤 `supabase/migrations/20261027_notifications_comments_roles.sql`도 실행합니다. 알림 기록, 수정 요청 댓글, 관리자 권한 변경 함수가 추가됩니다.
+3. 같은 SQL Editor에서 기존 마이그레이션을 순서대로 실행한 뒤 `supabase/migrations/20261027_notifications_comments_roles.sql`과 `supabase/migrations/20261027_allow_own_report_delete.sql`도 실행합니다. 알림 기록, 수정 요청 댓글, 관리자 권한 변경 함수와 본인 보고서 삭제 정책이 추가됩니다.
 4. 프로젝트의 **Project Settings → API**에서 Project URL과 publishable/anon key를 복사합니다.
 5. `.env.example`을 `.env`로 복사해 다음 값을 채웁니다.
 

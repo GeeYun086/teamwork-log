@@ -108,6 +108,7 @@ create policy "participants update requests" on public.change_requests for updat
 create policy "users see team reports" on public.reports for select to authenticated using(public.is_team_member(team_id));
 create policy "users save own reports" on public.reports for insert to authenticated with check(public.is_team_member(team_id) and user_id=auth.uid());
 create policy "users edit own reports" on public.reports for update to authenticated using(user_id=auth.uid()) with check(public.is_team_member(team_id) and user_id=auth.uid());
+create policy "users delete own reports" on public.reports for delete to authenticated using(user_id=auth.uid() and public.is_team_member(team_id));
 
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('attendance-photos','attendance-photos',false,5242880,array['image/jpeg','image/png','image/webp'])
