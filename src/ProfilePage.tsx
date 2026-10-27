@@ -46,11 +46,11 @@ export default function ProfilePage({ name, email, role, teamName, inviteCode, m
       </div>
       <div className="profile-setting-row">
         <span className="profile-setting-icon"><BellRing size={17}/></span>
-        <div className="profile-setting-copy"><b>팀 출퇴근 알림</b><small>{!pushSupported ? '이 브라우저는 푸시 알림을 지원하지 않습니다. 지원되는 브라우저에서 이용해 주세요.' : pushPermission === 'denied' ? '기기에서 알림 권한이 차단되어 있어요. 브라우저 또는 휴대폰 설정에서 허용해 주세요.' : '팀원이 출근·퇴근 기록을 등록하면 알림을 보내고, 알림을 누르면 앱을 엽니다. 기기마다 한 번 설정해 주세요.'}</small></div>
+        <div className="profile-setting-copy"><b>팀 활동 푸시 알림</b><small>{!pushSupported ? '이 브라우저는 푸시 알림을 지원하지 않습니다. 지원되는 브라우저에서 이용해 주세요.' : pushPermission === 'denied' ? '기기에서 알림 권한이 차단되어 있어요. 브라우저 또는 휴대폰 설정에서 허용해 주세요.' : '팀 활동의 출퇴근 인증·퇴근 보고·수정 요청을 이 기기로 푸시 전송합니다. 받을 각 기기에서 따로 켜 주세요.'}</small></div>
         <span className={`profile-setting-status ${pushSubscribed ? 'is-on' : ''}`}>{pushSubscribed ? '켜짐' : pushPermission === 'denied' ? '권한 차단' : '꺼짐'}</span>
         <button className={`button ${pushSubscribed ? 'outline' : 'primary'} small profile-push-toggle`} onClick={onTogglePush} disabled={!pushSupported || pushBusy || !sessionActive}>{pushBusy ? '처리 중…' : pushSubscribed ? '알림 끄기' : '알림 켜기'}</button>
       </div>
-      <p className="profile-note">iPhone은 홈 화면에 추가한 앱에서 알림 권한을 허용해야 합니다. 설치된 앱에서 처음 로그인한 뒤에는 로그아웃하거나 브라우저 데이터를 지우기 전까지 로그인 상태가 유지됩니다.</p>
+      <p className="profile-note">푸시가 오지 않으면 기기 알림 권한과 집중 모드를 확인해 주세요. iPhone은 홈 화면에 추가한 앱을 열어 알림을 허용해야 합니다. 알림은 이 기기에만 연결되므로 다른 팀원도 각자 설정해야 해요.</p>
     </section>
 
     {isAdmin && <>
