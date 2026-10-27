@@ -6,3 +6,18 @@ create policy "participants delete requests" on public.change_requests
     public.is_team_member(team_id)
     and (requester_id = auth.uid() or assignee_id = auth.uid() or public.is_team_admin(team_id))
   );
+
+-- Publish request changes so teammates see deletions and status updates immediately.
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
+     and not exists (
+       select 1 from pg_publication_tables
+       where pubname = 'supabase_realtime'
+         and schemaname = 'public'
+         and tablename = 'change_requests'
+     ) then
+    execute 'alter publication supabase_realtime add table public.change_requests';
+  end if;
+end
+$$;

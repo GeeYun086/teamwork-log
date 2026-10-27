@@ -106,6 +106,7 @@ create policy "participants see requests" on public.change_requests for select t
 create policy "members create requests" on public.change_requests for insert to authenticated with check(public.is_team_member(team_id) and requester_id=auth.uid());
 create policy "participants update requests" on public.change_requests for update to authenticated using(requester_id=auth.uid() or assignee_id=auth.uid() or public.is_team_admin(team_id)) with check(public.is_team_member(team_id));
 create policy "participants delete requests" on public.change_requests for delete to authenticated using(public.is_team_member(team_id) and (requester_id=auth.uid() or assignee_id=auth.uid() or public.is_team_admin(team_id)));
+do $$ begin if exists(select 1 from pg_publication where pubname='supabase_realtime') and not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='change_requests') then execute 'alter publication supabase_realtime add table public.change_requests'; end if; end $$;
 create policy "users see team reports" on public.reports for select to authenticated using(public.is_team_member(team_id));
 create policy "users save own reports" on public.reports for insert to authenticated with check(public.is_team_member(team_id) and user_id=auth.uid());
 create policy "users edit own reports" on public.reports for update to authenticated using(user_id=auth.uid()) with check(public.is_team_member(team_id) and user_id=auth.uid());
