@@ -48,3 +48,46 @@
 @media(max-width:760px){.attendance-stats-panel{padding:17px 15px}.attendance-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.attendance-stats-grid>div{min-height:78px;padding:12px}.attendance-record-title{align-items:flex-start;flex-direction:column;gap:4px;margin-top:18px}.attendance-record-header{display:none}.attendance-record-row{grid-template-columns:1fr auto;gap:8px;min-width:0;padding:12px 4px}.attendance-record-row>b{text-align:right}.attendance-event{grid-column:1/-1;padding:9px 10px;border-radius:8px;background:#f8f9fc}.late-by-member{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
 @media(max-width:450px){.attendance-stats-grid b{font-size:21px}.late-by-member{grid-template-columns:1fr}}
 
+/* Keep dashboard cards within the available page width, even with long request text. */
+.main,.content{min-width:0}
+.dashboard-grid{min-width:0;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+.dashboard-grid>.panel{min-width:0}
+.request-row{min-width:0}
+.request-row>div:nth-child(2){min-width:0;overflow:hidden}
+.request-row b,.request-row small{white-space:normal;overflow-wrap:anywhere}
+.request-row b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.user-card{gap:0}
+.profile-button{flex:1;min-width:0;display:flex;align-items:center;gap:9px;padding:0;border:0;background:none;text-align:left}
+.profile-button>div:nth-child(2){flex:1;min-width:0}
+.profile-button b,.profile-button small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logout-button{width:34px;height:34px;flex:none;border:0;border-radius:8px;background:transparent;color:#9da4ae;display:grid;place-items:center}
+.logout-button:hover{background:#f3f4f7;color:#4d5fd2}
+.profile-content{max-width:1000px}
+.profile-summary{padding:22px}
+.profile-summary-heading{display:flex;align-items:center;gap:13px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.profile-avatar{width:48px;height:48px;font-size:19px}
+.profile-summary-heading h2,.invite-admin-card h2{font-size:18px;margin:0 0 4px}
+.profile-summary-heading span{color:var(--muted);font-size:14px}
+.profile-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-top:17px}
+.profile-fields>div{min-width:0;display:grid;gap:6px}
+.profile-fields small,.managed-member-info small{font-size:13px;color:var(--muted)}
+.profile-fields b{font-size:14px;overflow-wrap:anywhere}
+.invite-admin-card{margin-top:15px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.invite-admin-card>div{flex:1;min-width:220px;display:flex;align-items:flex-start;gap:11px}
+.profile-section-icon{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:9px;background:#eff1ff;color:#596fe3}
+.invite-admin-card p{font-size:14px;line-height:1.6;color:var(--muted);margin:3px 0 0}
+.invite-admin-card code{font-size:15px;font-weight:700;letter-spacing:1px;background:#f5f6fa;border-radius:7px;padding:9px 11px}
+.team-admin-panel{margin-top:15px}
+.team-admin-panel .panel-heading>svg{color:#6679dc}
+.managed-member-list{display:grid}
+.managed-member{min-width:0;display:flex;align-items:center;gap:11px;padding:12px 2px;border-top:1px solid #f1f2f4}
+.managed-member-info{flex:1;min-width:0}
+.managed-member-info b,.managed-member-info small{display:block}
+.managed-member-info b{font-size:14px}
+.managed-member-info em{font-size:12px;font-style:normal;color:#5d6fd7;background:#eff1ff;border-radius:5px;padding:2px 5px;margin-left:6px}
+.managed-role{font-size:13px;color:#5367d5;background:#eff1ff;border-radius:6px;padding:5px 8px}
+.remove-member{color:#bd5f59!important;white-space:nowrap}
+.profile-note{font-size:13px;line-height:1.6;color:var(--muted);margin:12px 0 0}
+@media(max-width:760px){.dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.profile-fields{grid-template-columns:1fr;gap:13px}.invite-admin-card{align-items:stretch}.invite-admin-card>div{min-width:100%}.invite-admin-card code{flex:1;text-align:center}.managed-member{gap:8px}.remove-member{padding:7px 8px!important;font-size:12px!important}}
+
