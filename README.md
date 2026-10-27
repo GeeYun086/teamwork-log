@@ -15,7 +15,7 @@ npm run dev
 
 1. [Supabase](https://supabase.com/)에서 프로젝트를 생성합니다.
 2. 프로젝트의 **SQL Editor**에서 `supabase/schema.sql` 전체를 실행합니다. 기본 테이블, 팀 합류 함수, 접근 정책, 비공개 사진 버킷이 준비됩니다.
-3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`, `supabase/migrations/20261027_daily_start_times.sql`, `supabase/migrations/20261027_end_times_and_announcements.sql`, `supabase/migrations/20261027_lock_attendance_photos.sql`을 순서대로 실행합니다. 개인별 주 3일 근무 일정, 요일별 출퇴근 시각, 주간 변경 일정, 퇴근 기록, 지각·조퇴 계산, 팀 공지사항이 추가됩니다. 이 기능은 2026-10-27부터 기록합니다.
+3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`, `supabase/migrations/20261027_daily_start_times.sql`, `supabase/migrations/20261027_end_times_and_announcements.sql`, `supabase/migrations/20261027_lock_attendance_photos.sql`, `supabase/migrations/20261027_checkout_attendance_photos.sql`, `supabase/migrations/20261027_case_insensitive_invite_codes.sql`, `supabase/migrations/20261027_allow_attendance_backfill.sql`을 순서대로 실행합니다. 개인별 주 3일 근무 일정, 출퇴근 사진, 주간 변경 일정, 지각비, 사후 등록 기한이 추가됩니다.
 4. 프로젝트의 **Project Settings → API**에서 Project URL과 publishable/anon key를 복사합니다.
 5. `.env.example`을 `.env`로 복사해 다음 값을 채웁니다.
 
@@ -34,7 +34,8 @@ npm run dev
 
 ## 기능
 
-- 출근 사진과 서버 기준 출근·퇴근 시각, 지각 분 기록. 사진은 기기에서 긴 변 1440px JPEG로 축소한 뒤 저장
+- 출근·퇴근 사진과 서버 기준 사진 등록 시각, 지각 분·지각비 기록. 사진은 기기에서 긴 변 1440px JPEG로 축소한 뒤 저장
+- 2026-10-26·27 사후 출퇴근 기록(사후 표시 및 등록 시각 별도 보관). 사후 등록은 10월 27일까지만 허용하고 이후에는 실시간 인증만 가능
 - 팀 전체/개인별 주차 계획과 예정·진행 중·완료·대기 상태
 - 오늘 메모, 완료 내용, 대기 사유, 다음 할 일
 - 담당자·업무·우선순위·희망일이 있는 수정 요청과 상태 추적
@@ -50,7 +51,7 @@ npm run dev
 - 이 코드 자체는 오픈소스 의존성만 사용하며 라이선스 구독료가 없습니다.
 - 개인/비상업 프로젝트라면 Vercel Hobby는 $0이고, Supabase Free도 $0으로 시작할 수 있습니다. 다만 Supabase Free는 데이터베이스 500MB, 파일 저장 1GB, egress 5GB 한도이며 프로젝트가 1주 비활성 상태면 pause될 수 있습니다. 사진은 Storage에 저장되고 업무·일정·시각은 DB에 저장됩니다. [Supabase 요금](https://supabase.com/pricing)
 - 팀의 상업적/업무용 서비스라면 Vercel Hobby는 개인용·비상업 용도 제한이 있으므로, 현재 안내 기준 Pro는 $20/월입니다. Supabase Pro는 $25/월부터이며 저장공간과 백업 등이 늘어납니다. 세금, 사용량 초과, 요금 변경 가능성이 있으니 배포 전에 [Vercel 요금](https://vercel.com/pricing)과 Supabase 요금을 다시 확인하세요.
-- Supabase Free는 현재 파일 저장 1GB, 데이터베이스 500MB, egress 5GB 한도를 제공합니다. 사진은 Storage에, 시각·일정·보고서는 DB에 저장됩니다. 사진은 업로드 전에 축소·압축하고 1인 1근무일 경로에 덮어써서 교체 사진이 누적되지 않게 합니다. 최대치 5MB 사진으로 잡아도 주 3회 근무하는 5명 팀은 한 달 약 300~350MB 수준(월 13회 근무 가정)이라 한 달은 여유가 있지만, 여러 달 누적과 사진 열람량에 따라 1GB Storage/5GB 전송 한도에 가까워질 수 있습니다. Supabase 대시보드의 Storage 사용량을 매달 확인하고 보관 기간을 정하세요.
+- Supabase Free는 현재 파일 저장 1GB, 데이터베이스 500MB, egress 5GB 한도를 제공합니다. 사진은 Storage에, 시각·일정·보고서는 DB에 저장됩니다. 출근·퇴근 사진을 각각 저장하므로 사진 한 장당 최대 5MB 기준 주 3회 근무하는 5명 팀은 월 최대 약 650MB(월 13회 근무 가정)까지 늘 수 있습니다. 실제 사진은 업로드 전에 축소·압축해 보통 이보다 작지만, 여러 달 누적과 사진 열람량에 따라 1GB Storage/5GB 전송 한도에 가까워질 수 있습니다. Supabase 대시보드의 Storage 사용량을 확인하고 사진 보관 기간을 정하세요.
 - AI 요약은 현재 연결되어 있지 않아 AI API 비용이 발생하지 않습니다. 추후 선택 실행으로 추가하면 모델 호출량에 따라 별도 비용이 생깁니다.
 - 로그인 이메일 인증을 켜면 이메일 발송량이나 별도 SMTP 설정에 따라 비용/설정이 추가될 수 있습니다.
 

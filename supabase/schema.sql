@@ -17,6 +17,8 @@ create table if not exists public.attendance (
   user_id uuid not null references auth.users on delete cascade,
   work_date date not null default (now() at time zone 'Asia/Seoul')::date,
   photo_path text not null, checkout_photo_path text, uploaded_at timestamptz not null default now(), changed_at timestamptz,
+  is_backfilled boolean not null default false, backfilled_at timestamptz, late_fee_krw integer not null default 0,
+  backfilled_by uuid references auth.users on delete set null,
   unique(team_id,user_id,work_date)
 );
 create table if not exists public.tasks (
