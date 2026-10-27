@@ -47,4 +47,4 @@
 @media(max-width:1050px){.attendance-stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.attendance-stats-panel{padding:17px 15px}.attendance-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.attendance-stats-grid>div{min-height:78px;padding:12px}.attendance-record-title{align-items:flex-start;flex-direction:column;gap:4px;margin-top:18px}.attendance-record-header{display:none}.attendance-record-row{grid-template-columns:1fr auto;gap:8px;min-width:0;padding:12px 4px}.attendance-record-row>b{text-align:right}.attendance-event{grid-column:1/-1;padding:9px 10px;border-radius:8px;background:#f8f9fc}.late-by-member{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
 @media(max-width:450px){.attendance-stats-grid b{font-size:21px}.late-by-member{grid-template-columns:1fr}}
-.attendance-backfill-tag{display:inline-flex;margin-left:6px;padding:2px 6px;border-radius:999px;background:#f0edff;color:#6654b4;font-size:11px;font-style:normal;font-weight:700;vertical-align:middle}
+
