@@ -13,7 +13,15 @@ create table if not exists public.push_subscriptions (
 create index if not exists push_subscriptions_team_id_idx
   on public.push_subscriptions(team_id);
 
+create table if not exists public.attendance_push_events (
+  attendance_id uuid not null references public.attendance(id) on delete cascade,
+  event_type text not null check (event_type in ('check_in', 'check_out', 'backfill')),
+  created_at timestamptz not null default now(),
+  primary key (attendance_id, event_type)
+);
+
 alter table public.push_subscriptions enable row level security;
+alter table public.attendance_push_events enable row level security;
 
 drop policy if exists "members manage own push subscriptions" on public.push_subscriptions;
 create policy "members manage own push subscriptions"

@@ -42,11 +42,19 @@ Deno.serve(async (request: Request) => {
   if (body.event === 'check_out' && !attendance.checked_out_at) return json({ error: 'Checkout is not recorded yet' }, 409);
   if (body.event === 'backfill' && !attendance.is_backfilled) return json({ error: 'This is not a backfill record' }, 409);
 
-  const [{ data: member }, { data: subscriptions }] = await Promise.all([
+  const { error: eventError } = await admin.from('attendance_push_events').insert({ attendance_id: attendance.id, event_type: body.event });
+  if (eventError?.code === '23505') return json({ sent: 0, duplicate: true });
+  if (eventError) return json({ error: 'Could not record the notification event' }, 500);
+
+  const [{ data: member }, { data: currentMembers }] = await Promise.all([
     admin.from('team_members').select('display_name').eq('team_id', attendance.team_id).eq('user_id', user.id).maybeSingle(),
-    admin.from('push_subscriptions').select('endpoint,p256dh,auth').eq('team_id', attendance.team_id)
+    admin.from('team_members').select('user_id').eq('team_id', attendance.team_id)
   ]);
   if (!member) return json({ error: 'Team membership required' }, 403);
+  const memberIds = (currentMembers || []).map((row) => row.user_id);
+  const { data: subscriptions } = memberIds.length
+    ? await admin.from('push_subscriptions').select('endpoint,p256dh,auth').eq('team_id', attendance.team_id).in('user_id', memberIds)
+    : { data: [] };
 
   const date = attendance.work_date;
   const formatTime = (value: string | null) => value
