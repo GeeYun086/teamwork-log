@@ -15,7 +15,7 @@ npm run dev
 
 1. [Supabase](https://supabase.com/)에서 프로젝트를 생성합니다.
 2. 프로젝트의 **SQL Editor**에서 `supabase/schema.sql` 전체를 실행합니다. 기본 테이블, 팀 합류 함수, 접근 정책, 비공개 사진 버킷이 준비됩니다.
-3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`, 이어서 `supabase/migrations/20261027_daily_start_times.sql`을 실행합니다. 개인별 주 3일 근무 일정, 요일별 출근 시각, 주간 변경 일정, 퇴근 기록, 지각 계산, `대기` 상태가 추가됩니다. 이 기능은 2026-10-27부터 기록합니다.
+3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`, `supabase/migrations/20261027_daily_start_times.sql`, `supabase/migrations/20261027_end_times_and_announcements.sql`을 순서대로 실행합니다. 개인별 주 3일 근무 일정, 요일별 출퇴근 시각, 주간 변경 일정, 퇴근 기록, 지각·조퇴 계산, 팀 공지사항이 추가됩니다. 이 기능은 2026-10-27부터 기록합니다.
 4. 프로젝트의 **Project Settings → API**에서 Project URL과 publishable/anon key를 복사합니다.
 5. `.env.example`을 `.env`로 복사해 다음 값을 채웁니다.
 
@@ -28,7 +28,7 @@ npm run dev
 7. GitHub에 프로젝트를 push하고 Vercel에서 **Add New → Project**로 저장소를 import합니다. Framework Preset은 Vite, Build Command는 `npm run build`, Output Directory는 `dist`로 둡니다 (`vercel.json`에 반영되어 있습니다).
 8. Vercel 프로젝트의 **Settings → Environment Variables**에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`를 Production/Preview 환경에 추가하고 Deploy합니다. Supabase Auth URL Configuration의 Site URL과 Redirect URLs에 배포 도메인도 추가합니다.
 
-이제 팀원은 같은 Vercel HTTPS 주소로 접속해 사진·출퇴근 시각·근무 일정·업무·보고서를 공유합니다. 일정은 사람마다 주 3일과 기준 출근 시각을 지정하고 특정 주의 변경도 팀 전체에 표시됩니다. 변경은 최대 30초 안에 반영됩니다. 본인은 날짜를 선택해 과거 퇴근 보고서를 수정할 수 있습니다.
+이제 팀원은 같은 Vercel HTTPS 주소로 접속해 사진·출퇴근 시각·근무 일정·업무·보고서를 공유합니다. 일정은 사람마다 주 3일과 기준 출근 시각을 지정하고 특정 주의 변경도 팀 전체에 표시됩니다. 공지사항은 관리자가 공통 업무와 기한을 등록하고, 팀원별 확인·완료 상태를 공유합니다. 변경은 최대 30초 안에 반영됩니다. 본인은 날짜를 선택해 과거 퇴근 보고서를 수정할 수 있습니다.
 
 비밀 `service_role` 키는 브라우저 환경 변수로 넣지 마세요. 앱은 사용자 세션과 데이터베이스 RLS 정책으로 접근을 제한합니다. 출근 사진은 비공개 버킷에 저장하고, 본인과 관리자만 만료되는 서명 URL로 사진을 볼 수 있습니다. 브라우저에서 긴 변 1440px JPEG로 최적화한 뒤 최대 5MB로 업로드합니다. 데이터 보관 기간 설정 UI는 아직 없으므로 운영 시 Supabase에서 보관 정책을 정해야 합니다.
 
@@ -39,6 +39,7 @@ npm run dev
 - 오늘 메모, 완료 내용, 대기 사유, 다음 할 일
 - 담당자·업무·우선순위·희망일이 있는 수정 요청과 상태 추적
 - 업무 기록으로 초안을 만든 AS-IS/TO-BE 보고서, 수정·저장·복사
+- 팀 공지사항에 공통 업무·기한을 게시하고 팀원별 확인·완료 현황 공유
 - 팀 대시보드의 출근, 계획 진행, 확인 대기 요청, 대기 업무, 보고서 작성 현황
 - 작은 화면에서 사용할 수 있는 모바일 탐색과 사진 촬영 입력`n- 팀원별 주 3일 반복 근무일·개인 출근 시각, 특정 주 변경 설정 및 2026-10-27부터의 지각 통계`n- 본인의 과거 날짜 퇴근 보고서 수정·저장
 
