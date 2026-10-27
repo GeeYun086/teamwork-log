@@ -1,4 +1,4 @@
-import { Copy, ShieldCheck, Trash2, Users } from 'lucide-react'
+import { BellRing, Copy, LockKeyhole, ShieldCheck, Trash2, Users } from 'lucide-react'
 
 type Member = { user_id: string; display_name: string; role: string; joined_at?: string }
 
@@ -11,11 +11,17 @@ type Props = {
   members: Member[]
   isAdmin: boolean
   currentUserId: string
+  sessionActive: boolean
+  pushSupported: boolean
+  pushPermission: string
+  pushSubscribed: boolean
+  pushBusy: boolean
+  onTogglePush: () => void
   onCopyInvite: () => void
   onRemoveMember: (member: Member) => void
 }
 
-export default function ProfilePage({ name, email, role, teamName, inviteCode, members, isAdmin, currentUserId, onCopyInvite, onRemoveMember }: Props) {
+export default function ProfilePage({ name, email, role, teamName, inviteCode, members, isAdmin, currentUserId, sessionActive, pushSupported, pushPermission, pushSubscribed, pushBusy, onTogglePush, onCopyInvite, onRemoveMember }: Props) {
   return <div className="content profile-content">
     <div className="page-heading">
       <div><div className="eyebrow">MY ACCOUNT</div><h1>{isAdmin ? '관리자 페이지' : '마이페이지'}</h1><p>내 계정 정보와 팀 공간 정보를 확인할 수 있어요.</p></div>
@@ -28,6 +34,22 @@ export default function ProfilePage({ name, email, role, teamName, inviteCode, m
         <div><small>소속 팀</small><b>{teamName}</b></div>
         <div><small>권한</small><b>{role === 'admin' ? '관리자' : '팀원'}</b></div>
       </div>
+    </section>
+
+    <section className="panel profile-settings-card">
+      <div className="panel-heading"><div><h3>로그인 및 알림 설정</h3><p>이 기기에서 로그인 상태와 출퇴근 알림을 관리합니다.</p></div></div>
+      <div className="profile-setting-row">
+        <span className="profile-setting-icon"><LockKeyhole size={17}/></span>
+        <div className="profile-setting-copy"><b>로그인 유지</b><small>{email || '로그인 계정'} · 이 기기의 앱 저장소에 로그인 상태를 보관하고 자동 갱신합니다.</small></div>
+        <span className="profile-setting-status is-on">{sessionActive ? '유지 중' : '로그인 필요'}</span>
+      </div>
+      <div className="profile-setting-row">
+        <span className="profile-setting-icon"><BellRing size={17}/></span>
+        <div className="profile-setting-copy"><b>팀 출퇴근 알림</b><small>{!pushSupported ? '이 브라우저는 푸시 알림을 지원하지 않습니다. 지원되는 브라우저에서 이용해 주세요.' : pushPermission === 'denied' ? '기기에서 알림 권한이 차단되어 있어요. 브라우저 또는 휴대폰 설정에서 허용해 주세요.' : '팀원이 출근·퇴근 기록을 등록하면 알림을 보내고, 알림을 누르면 앱을 엽니다. 기기마다 한 번 설정해 주세요.'}</small></div>
+        <span className={`profile-setting-status ${pushSubscribed ? 'is-on' : ''}`}>{pushSubscribed ? '켜짐' : pushPermission === 'denied' ? '권한 차단' : '꺼짐'}</span>
+        <button className={`button ${pushSubscribed ? 'outline' : 'primary'} small profile-push-toggle`} onClick={onTogglePush} disabled={!pushSupported || pushBusy || !sessionActive}>{pushBusy ? '처리 중…' : pushSubscribed ? '알림 끄기' : '알림 켜기'}</button>
+      </div>
+      <p className="profile-note">iPhone은 홈 화면에 추가한 앱에서 알림 권한을 허용해야 합니다. 설치된 앱에서 처음 로그인한 뒤에는 로그아웃하거나 브라우저 데이터를 지우기 전까지 로그인 상태가 유지됩니다.</p>
     </section>
 
     {isAdmin && <>

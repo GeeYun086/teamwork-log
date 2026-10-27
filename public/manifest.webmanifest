@@ -1,0 +1,14 @@
+{
+  "id": "/",
+  "name": "팀워크 로그",
+  "short_name": "팀워크 로그",
+  "description": "팀 출퇴근 인증과 업무 공유",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#f6f7f9",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

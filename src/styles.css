@@ -126,3 +126,7 @@
 .request-detail-status select{border:1px solid #e5e8ee;background:white;border-radius:8px;padding:8px 10px;font-size:14px}
 @media(max-width:560px){.request-filter-tabs{gap:2px;flex-wrap:wrap}.request-filter-tabs button{padding:9px 8px;font-size:13px}.request-filter-tabs small{width:100%;margin:0 0 9px 8px}.request-detail-card{padding:16px}.request-detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:13px}}
 
+
+.push-notification{color:#6f7ed5}.push-notification.is-on{color:#23906b;background:#eaf7f0}.push-notification:disabled{opacity:.55;cursor:wait}
+
+.profile-settings-card{margin-top:16px;padding:22px}.profile-setting-row{display:flex;align-items:center;gap:13px;padding:15px 2px;border-top:1px solid #edf0f4}.profile-setting-row:first-of-type{border-top:0}.profile-setting-icon{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:10px;background:#eff1ff;color:#5d70dc}.profile-setting-copy{flex:1;min-width:0;display:grid;gap:4px}.profile-setting-copy b{font-size:15px}.profile-setting-copy small{font-size:13px;line-height:1.55;color:#87909d}.profile-setting-status{font-size:13px;font-weight:700;color:#87909d;white-space:nowrap}.profile-setting-status.is-on{color:#26835f}.profile-push-toggle{white-space:nowrap}.profile-settings-card .profile-note{margin-top:4px}@media(max-width:560px){.profile-settings-card{padding:16px}.profile-setting-row{gap:9px;flex-wrap:wrap}.profile-setting-copy{width:calc(100% - 52px)}.profile-setting-status{margin-left:45px}.profile-push-toggle{margin-left:auto}}

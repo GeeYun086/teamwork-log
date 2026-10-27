@@ -15,7 +15,7 @@ npm run dev
 
 1. [Supabase](https://supabase.com/)에서 프로젝트를 생성합니다.
 2. 프로젝트의 **SQL Editor**에서 `supabase/schema.sql` 전체를 실행합니다. 기본 테이블, 팀 합류 함수, 접근 정책, 비공개 사진 버킷이 준비됩니다.
-3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`, `supabase/migrations/20261027_daily_start_times.sql`, `supabase/migrations/20261027_end_times_and_announcements.sql`, `supabase/migrations/20261027_lock_attendance_photos.sql`, `supabase/migrations/20261027_checkout_attendance_photos.sql`, `supabase/migrations/20261027_case_insensitive_invite_codes.sql`, `supabase/migrations/20261027_allow_attendance_backfill.sql`을 순서대로 실행합니다. 개인별 주 3일 근무 일정, 출퇴근 사진, 주간 변경 일정, 지각비, 사후 등록 기한이 추가됩니다.
+3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`, `supabase/migrations/20261027_daily_start_times.sql`, `supabase/migrations/20261027_end_times_and_announcements.sql`, `supabase/migrations/20261027_lock_attendance_photos.sql`, `supabase/migrations/20261027_checkout_attendance_photos.sql`, `supabase/migrations/20261027_case_insensitive_invite_codes.sql`, `supabase/migrations/20261027_allow_attendance_backfill.sql`, `supabase/migrations/20261027_attendance_push_subscriptions.sql`을 순서대로 실행합니다. 개인별 주 3일 근무 일정, 출퇴근 사진, 지각비, 푸시 구독 저장소가 준비됩니다.
 4. 프로젝트의 **Project Settings → API**에서 Project URL과 publishable/anon key를 복사합니다.
 5. `.env.example`을 `.env`로 복사해 다음 값을 채웁니다.
 
@@ -27,8 +27,11 @@ npm run dev
 6. `npm run dev`를 다시 실행하고 계정을 만든 뒤 새 팀을 생성합니다. 팀원은 각자 계정을 만든 다음 사이드바의 초대 코드를 받아 같은 팀 공간에 합류합니다.
 7. GitHub에 프로젝트를 push하고 Vercel에서 **Add New → Project**로 저장소를 import합니다. Framework Preset은 Vite, Build Command는 `npm run build`, Output Directory는 `dist`로 둡니다 (`vercel.json`에 반영되어 있습니다).
 8. Vercel 프로젝트의 **Settings → Environment Variables**에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`를 Production/Preview 환경에 추가하고 Deploy합니다. Supabase Auth URL Configuration의 Site URL과 Redirect URLs에 배포 도메인도 추가합니다.
+9. 브라우저 푸시용 VAPID 키 쌍을 생성합니다. 공개 키는 Vercel의 `VITE_VAPID_PUBLIC_KEY`에, 공개 키·비밀 키·`VAPID_SUBJECT`(예: `mailto:관리자 이메일`)는 Supabase Edge Function Secrets에 등록합니다. 비밀 키는 절대 `VITE_` 환경 변수나 브라우저 코드에 넣지 않습니다.
+10. Supabase CLI로 연결한 뒤 `supabase functions deploy attendance-push`를 실행합니다. 함수 코드는 `supabase/functions/attendance-push/index.ts`에 있습니다. Vercel을 다시 배포해 공개 VAPID 키를 프런트엔드에 반영합니다.
+11. 로그인한 팀원은 각 기기에서 앱 우측 상단의 종 모양 출퇴근 알림 버튼을 한 번 눌러 권한을 허용합니다. 알림을 누르면 팀워크 로그 앱이 열립니다. iPhone은 홈 화면에 추가한 웹앱에서 푸시를 허용해야 하며, Android는 지원 브라우저에서 권한을 허용하면 됩니다.
 
-이제 팀원은 같은 Vercel HTTPS 주소로 접속해 사진·출퇴근 시각·근무 일정·업무·보고서를 공유합니다. 일정은 사람마다 주 3일과 기준 출근 시각을 지정하고 특정 주의 변경도 팀 전체에 표시됩니다. 공지사항은 관리자가 공통 업무와 기한을 등록하고, 팀원별 확인·완료 상태를 공유합니다. 변경은 최대 30초 안에 반영됩니다. 본인은 날짜를 선택해 과거 퇴근 보고서를 수정할 수 있습니다.
+이제 팀원은 같은 Vercel HTTPS 주소로 접속해 사진·출퇴근 시각·근무 일정·업무·보고서를 공유합니다. 로그인 세션은 기기의 브라우저 저장소에 유지되고 자동 갱신됩니다. 일정은 사람마다 주 3일과 기준 출퇴근 시각을 지정하고 특정 주의 변경도 팀 전체에 표시됩니다. 공지사항은 관리자가 공통 업무와 기한을 등록하고, 팀원별 확인·완료 상태를 공유합니다. 변경은 최대 30초 안에 반영됩니다. 본인은 날짜를 선택해 과거 퇴근 보고서를 수정할 수 있습니다.
 
 비밀 `service_role` 키는 브라우저 환경 변수로 넣지 마세요. 앱은 사용자 세션과 데이터베이스 RLS 정책으로 접근을 제한합니다. 출근 사진은 근무일별 1회만 등록할 수 있고, 등록 뒤에는 재업로드와 덮어쓰기가 차단됩니다. 비공개 버킷에 저장하며 본인과 관리자만 만료되는 서명 URL로 사진을 볼 수 있습니다. 브라우저에서 긴 변 1440px JPEG로 최적화한 뒤 최대 5MB로 업로드합니다. 데이터 보관 기간 설정 UI는 아직 없으므로 운영 시 Supabase에서 보관 정책을 정해야 합니다.
 
@@ -62,4 +65,4 @@ npm run dev
 - 출근 사진: Supabase private Storage bucket + signed URL
 - 배포: Vite 정적 산출물 (`dist/`)을 정적 웹 호스팅에 게시
 
-이 MVP에는 카카오톡 자동 전송, 근태 계산, 얼굴 인식, AI 판정, 실시간 푸시 알림이 포함되지 않습니다. 변경 요청과 업무는 공유 데이터베이스에 저장되며, 다른 사용자의 변경은 화면에서 최대 30초 간격으로 반영됩니다.
+카카오톡 자동 전송, 얼굴 인식, AI 판정은 포함되지 않습니다. 출퇴근 사진·시각 등록 시 팀원에게 보내는 브라우저 푸시는 Supabase Edge Function과 VAPID 키 설정 후 활성화됩니다. 팀원은 기기별로 알림을 한 번 허용해야 하며, 푸시 발송량과 Edge Function 실행량은 Supabase 플랜 한도에 포함됩니다.
