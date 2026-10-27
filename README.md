@@ -15,7 +15,7 @@ npm run dev
 
 1. [Supabase](https://supabase.com/)에서 프로젝트를 생성합니다.
 2. 프로젝트의 **SQL Editor**에서 `supabase/schema.sql` 전체를 실행합니다. 기본 테이블, 팀 합류 함수, 접근 정책, 비공개 사진 버킷이 준비됩니다.
-3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`도 실행합니다. 개인별 주 3일 근무 일정, 주간 변경 일정, 퇴근 기록, 지각 계산, `대기` 상태가 추가됩니다. 이 기능은 2026-10-27부터 기록합니다.
+3. 같은 SQL Editor에서 `supabase/migrations/20261027_attendance_schedule.sql`, 이어서 `supabase/migrations/20261027_daily_start_times.sql`을 실행합니다. 개인별 주 3일 근무 일정, 요일별 출근 시각, 주간 변경 일정, 퇴근 기록, 지각 계산, `대기` 상태가 추가됩니다. 이 기능은 2026-10-27부터 기록합니다.
 4. 프로젝트의 **Project Settings → API**에서 Project URL과 publishable/anon key를 복사합니다.
 5. `.env.example`을 `.env`로 복사해 다음 값을 채웁니다.
 
