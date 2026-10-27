@@ -43,7 +43,9 @@ Deno.serve(async (request: Request) => {
     const { data: report } = await admin.from('reports').select('id,team_id,user_id,work_date').eq('id', entityId).maybeSingle();
     if (!report) return json({ error: 'Report not found' }, 404);
     if (report.user_id !== user.id) return json({ error: 'You cannot notify for this report' }, 403);
-    teamId = report.team_id; actorId = report.user_id; date = report.work_date; title = '퇴근 보고 등록'; detail = `${date} 퇴근 보고를 저장했어요.`;
+    const { data: member } = await admin.from('team_members').select('display_name').eq('team_id', report.team_id).eq('user_id', report.user_id).maybeSingle();
+    if (!member) return json({ error: 'Team membership required' }, 403);
+    teamId = report.team_id; actorId = report.user_id; date = report.work_date; title = '퇴근 보고 등록'; detail = `${member.display_name}님이 퇴근 보고를 저장했어요.`;
   } else if (event === 'request') {
     const { data: item } = await admin.from('change_requests').select('id,team_id,requester_id,assignee_id,task_id').eq('id', entityId).maybeSingle();
     if (!item) return json({ error: 'Request not found' }, 404);

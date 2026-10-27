@@ -9,6 +9,10 @@ self.addEventListener('push', event => {
     icon: '/icon.svg',
     badge: '/icon.svg',
     tag: payload.tag || 'attendance',
+    // Always ask the browser to display a system notification, including while
+    // the app page is open. The OS still controls banners and notification settings.
+    silent: false,
+    vibrate: [120, 60, 120],
     renotify: true,
     data: { url: target }
   }));
