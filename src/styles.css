@@ -154,3 +154,10 @@
 .app-back-button:hover{background:#f1f3f7;color:var(--blue)}
 .schedule-editor input:disabled,.schedule-editor .weekday-picker button:disabled{opacity:.55;cursor:not-allowed}
 @media(max-width:760px){.app-back-button{width:36px;height:36px;min-width:36px}.topbar .crumb{flex:1}}
+.topbar{justify-content:flex-start;gap:10px}
+.topbar .crumb{flex:1;text-align:left}
+.topbar .top-actions{margin-left:auto}
+@media(max-width:760px){.topbar .mobile-menu{order:-1}.topbar .crumb{flex:1;text-align:left}}
+
+.top-avatar-button{border:0;padding:0;cursor:pointer}
+.top-avatar-button:hover{box-shadow:0 0 0 3px #536ce422}
