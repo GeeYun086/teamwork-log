@@ -47,7 +47,7 @@ Deno.serve(async (request: Request) => {
     if (!member) return json({ error: 'Team membership required' }, 403);
     teamId = report.team_id; actorId = report.user_id; date = report.work_date; title = '퇴근 보고 등록'; detail = `${member.display_name}님이 퇴근 보고를 저장했어요.`;
     const { data: teamMembers } = await admin.from('team_members').select('user_id').eq('team_id', report.team_id);
-    recipientIds = (teamMembers || []).map(row => row.user_id);
+    recipientIds = (teamMembers || []).map(row => row.user_id).filter(id => id !== actorId);
     eventKey = `report:${entityId}:${report.updated_at}`;
   } else if (event === 'request') {
     const { data: item } = await admin.from('change_requests').select('id,team_id,requester_id,assignee_id,task_id').eq('id', entityId).maybeSingle();
@@ -85,6 +85,10 @@ Deno.serve(async (request: Request) => {
     admin.from('push_subscriptions').select('endpoint,p256dh,auth').eq('team_id', teamId).in('user_id', recipientIds)
   ]);
   if (!member) return json({ error: 'Team membership required' }, 403);
+  if (!subscriptions?.length) {
+    await admin.from('push_delivery_events').delete().eq('event_key', eventKey);
+    return json({ sent: 0, failed: 0, total: 0 });
+  }
   webpush.setVapidDetails(Deno.env.get('VAPID_SUBJECT') || 'mailto:admin@teamwork-log.app', vapidPublicKey, vapidPrivateKey);
   const payload = JSON.stringify({ title, body: `${detail}${date ? ` (${date})` : ''}`, url: '/', tag: `team-${eventKey}` });
   const results = await Promise.all((subscriptions || []).map(async subscription => {
@@ -97,7 +101,11 @@ Deno.serve(async (request: Request) => {
       console.error('Push delivery failed:', statusCode || error); return false;
     }
   }));
-  return json({ sent: results.filter(Boolean).length, failed: results.length - results.filter(Boolean).length, total: results.length });
+  const sent = results.filter(Boolean).length, failed = results.length - sent;
+  // A failed or partial attempt stays retryable. The stable notification tag
+  // replaces an earlier banner on devices that received the first attempt.
+  if (failed > 0) await admin.from('push_delivery_events').delete().eq('event_key', eventKey);
+  return json({ sent, failed, total: results.length });
 });
 
 function json(value: unknown, status = 200) {
