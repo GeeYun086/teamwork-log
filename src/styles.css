@@ -176,6 +176,8 @@
 .report-view-tabs>button{min-height:38px;padding:8px 12px;border:1px solid #e4e7ee;border-radius:9px;background:#fff;color:#596475;font-size:14px;font-weight:600;white-space:nowrap}
 .report-view-tabs>button.active{border-color:#dce2ff;background:#f0f2ff;color:var(--blue)}
 .report-view-tabs>button span{display:inline-grid;min-width:20px;height:20px;place-items:center;margin-left:4px;padding:0 5px;border-radius:99px;background:#fff;color:inherit;font-size:12px}
+.report-date-picker{display:flex;align-items:center;gap:7px;min-height:38px;padding:0 10px;border:1px solid #e4e7ee;border-radius:9px;background:#fff;color:#596475;font-size:13px;font-weight:600;white-space:nowrap}
+.report-date-picker input{min-width:132px;border:0;background:transparent;color:#344054;font:inherit;outline:none}
 .report-view-tabs>.report-back-to-list{display:inline-flex;align-items:center;gap:5px}
 .report-archive{padding:20px}
 .report-archive-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:14px}
@@ -195,7 +197,7 @@
 .report-archive-copy small{color:#5d70c8}
 .report-archive-item>svg{color:#8792a1}
 .report-archive-empty{padding:42px 12px;text-align:center;color:#8993a1;font-size:14px}
-@media(max-width:760px){.report-page-heading{display:grid;gap:14px}.report-view-tabs{width:100%}.report-view-tabs>button{flex:1}.report-view-tabs>.report-back-to-list{flex:0}.report-archive{padding:15px}.report-archive-heading{align-items:flex-start;flex-direction:column}.report-archive-heading label{width:100%;justify-content:space-between}.report-archive-heading select{max-width:none;flex:1}.report-archive-item{grid-template-columns:minmax(0,1fr) 18px;gap:8px;padding:12px}.report-archive-date{grid-column:1}.report-archive-copy{grid-column:1}.report-archive-item>svg{grid-column:2;grid-row:1/3}}
+@media(max-width:760px){.report-page-heading{display:grid;gap:14px}.report-view-tabs{width:100%}.report-view-tabs>button{flex:1}.report-view-tabs>.report-back-to-list{flex:0}.report-date-picker{width:100%;justify-content:space-between;order:3}.report-date-picker input{flex:1;max-width:175px}.report-view-tabs .save-state{order:4}.report-archive{padding:15px}.report-archive-heading{align-items:flex-start;flex-direction:column}.report-archive-heading label{width:100%;justify-content:space-between}.report-archive-heading select{max-width:none;flex:1}.report-archive-item{grid-template-columns:minmax(0,1fr) 18px;gap:8px;padding:12px}.report-archive-date{grid-column:1}.report-archive-copy{grid-column:1}.report-archive-item>svg{grid-column:2;grid-row:1/3}}
 
 /* Keep the workspace switcher visually quiet until it is opened. */
 .workspace-switcher .team-switch{background:#fff;border-color:var(--line);transition:background .16s ease,border-color .16s ease}
