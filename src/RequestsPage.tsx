@@ -24,7 +24,7 @@ export default function RequestsPage({ requests, allCount, allLabel, pendingCoun
   return <div className="content">
     <div className="page-heading"><div><div className="eyebrow">TEAM FEEDBACK</div><h1>수정 요청</h1><p>내가 보낸 요청과 팀원이 나에게 보낸 요청을 나눠서 확인해요.</p></div><button className="button primary" onClick={onCreate}><Plus size={16}/> 요청 보내기</button></div>
     <div className="request-filter-tabs" role="tablist" aria-label="수정 요청 구분">
-      {showTeamAll && <button type="button" role="tab" aria-selected={scope === 'all'} className={scope === 'all' ? 'active' : ''} onClick={() => onScopeChange('all')}>팀 전체 <span>{allCount}</span></button>}
+      <button type="button" role="tab" aria-selected={scope === 'all'} className={scope === 'all' ? 'active' : ''} onClick={() => onScopeChange('all')}>팀 전체 <span>{allCount}</span></button>
       <button type="button" role="tab" aria-selected={scope === 'received'} className={scope === 'received' ? 'active' : ''} onClick={() => onScopeChange('received')}>받은 요청 <span>{receivedCount}</span></button>
       <button type="button" role="tab" aria-selected={scope === 'sent'} className={scope === 'sent' ? 'active' : ''} onClick={() => onScopeChange('sent')}>보낸 요청 <span>{sentCount}</span></button>
       <small>{allLabel} {allCount}건 · {pendingCount}건 확인 대기</small>
