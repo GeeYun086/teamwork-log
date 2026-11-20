@@ -13,7 +13,8 @@ create policy "authors delete own request comments" on public.change_request_com
   for delete to authenticated
   using (author_id = auth.uid() and public.is_team_member(team_id));
 
-grant select, insert, update, delete on public.change_request_comments to authenticated;
+grant select, insert, delete on public.change_request_comments to authenticated;
+grant update (body) on public.change_request_comments to authenticated;
 
 create or replace function public.stamp_request_comment_updated_at()
 returns trigger language plpgsql set search_path = public
