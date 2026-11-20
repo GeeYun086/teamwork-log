@@ -22,11 +22,11 @@ Deno.serve(async (request: Request) => {
   const { data: { user }, error: userError } = await userClient.auth.getUser();
   if (userError || !user) return json({ error: 'Authentication required' }, 401);
 
-  let body: { event?: string; entity_id?: string; attendance_id?: string };
+  let body: { event?: string; entity_id?: string; attendance_id?: string; team_id?: string; schedule_scope?: string; week_start?: string | null };
   try { body = await request.json(); } catch { return json({ error: 'Invalid JSON body' }, 400); }
   const event = body.event || '';
   const entityId = body.entity_id || body.attendance_id || '';
-  if (!entityId || !['check_in', 'check_out', 'backfill', 'report', 'request', 'request_comment'].includes(event)) return json({ error: 'Invalid notification event' }, 400);
+  if (!entityId || !['check_in', 'check_out', 'backfill', 'report', 'request', 'request_comment', 'schedule'].includes(event)) return json({ error: 'Invalid notification event' }, 400);
 
   const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   let teamId = '', actorId = '', recipientIds: string[] = [], title = '', detail = '', date = '', eventKey = '';
@@ -58,6 +58,34 @@ Deno.serve(async (request: Request) => {
       admin.from('team_members').select('display_name').eq('team_id', item.team_id).eq('user_id', user.id).maybeSingle()
     ]);
     teamId = item.team_id; actorId = user.id; recipientIds = [item.assignee_id]; title = '새 수정 요청'; detail = `${member?.display_name || '팀원'}님이 ${task?.title || '업무 수정'} 요청을 보냈어요.`;
+  } else if (event === 'schedule') {
+    if (!body.team_id || !['base', 'weekly'].includes(body.schedule_scope || '')) return json({ error: 'Invalid schedule details' }, 400);
+    const table = body.schedule_scope === 'weekly' ? 'weekly_schedule_overrides' : 'work_schedules';
+    let query = admin.from(table).select('team_id,user_id,workdays,start_times,end_times,start_time,end_time,updated_by,updated_at').eq('team_id', body.team_id).eq('user_id', entityId);
+    if (body.schedule_scope === 'weekly') {
+      if (!body.week_start) return json({ error: 'Week start is required' }, 400);
+      query = query.eq('week_start', body.week_start);
+    }
+    const { data: schedule } = await query.maybeSingle();
+    if (!schedule) return json({ error: 'Schedule not found' }, 404);
+    if (schedule.updated_by !== user.id) return json({ error: 'You cannot notify for this schedule change' }, 403);
+    const [{ data: actor }, { data: target }, { data: teamMembers }] = await Promise.all([
+      admin.from('team_members').select('display_name,role').eq('team_id', schedule.team_id).eq('user_id', user.id).maybeSingle(),
+      admin.from('team_members').select('display_name').eq('team_id', schedule.team_id).eq('user_id', schedule.user_id).maybeSingle(),
+      admin.from('team_members').select('user_id').eq('team_id', schedule.team_id)
+    ]);
+    if (!actor || !target) return json({ error: 'Team membership required' }, 403);
+    if (schedule.user_id !== user.id && actor.role !== 'admin') return json({ error: 'Only an admin can change another member schedule' }, 403);
+    teamId = schedule.team_id; actorId = user.id;
+    recipientIds = (teamMembers || []).map(row => row.user_id).filter(id => id !== actorId);
+    const days = (schedule.workdays || []).map((day: number) => {
+      const labels = ['월', '화', '수', '목', '금', '토', '일'];
+      const key = String(day);
+      return `${labels[day - 1] || ''} ${schedule.start_times?.[key] || schedule.start_time}~${schedule.end_times?.[key] || schedule.end_time}`;
+    }).join(', ');
+    title = body.schedule_scope === 'weekly' ? '주간 근무 일정 변경' : '기본 근무 일정 변경';
+    detail = `${actor.display_name}님이 ${target.display_name}님의 ${body.schedule_scope === 'weekly' ? `${body.week_start} 주간` : '기본'} 근무 일정을 변경했어요.${days ? ` ${days}` : ''}`;
+    eventKey = `schedule:${table}:${schedule.team_id}:${schedule.user_id}:${body.week_start || 'base'}:${schedule.updated_at}`;
   } else {
     const { data: comment } = await admin.from('change_request_comments').select('id,team_id,request_id,author_id,body').eq('id', entityId).maybeSingle();
     if (!comment) return json({ error: 'Comment not found' }, 404);
