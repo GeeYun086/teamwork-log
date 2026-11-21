@@ -1,8 +1,16 @@
 import { createElement, useEffect, useState } from 'react'
 
 export function MarkdownPreview({ text, className = '' }: { text: string; className?: string }) {
+  const decodeEntities = (value: string) => value
+    .replace(/&#x([\da-f]{1,6});/gi, (_, code: string) => String.fromCodePoint(parseInt(code, 16)))
+    .replace(/&#(\d{1,7});/g, (_, code: string) => String.fromCodePoint(parseInt(code, 10)))
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&quot;/gi, '"')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&amp;/gi, '&')
   const inline = (value: string) => {
-    const parts = value.split(/(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|`[^`]+`|\*[^*]+\*|_[^_]+_|https?:\/\/[^\s]+)/g).filter(Boolean)
+    const parts = decodeEntities(value).split(/(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|`[^`]+`|\*[^*]+\*|_[^_]+_|https?:\/\/[^\s]+)/g).filter(Boolean)
     return parts.map((part, index) => {
       const link = part.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/)
       if (link) return <a key={index} href={link[2]} target="_blank" rel="noreferrer">{link[1]}</a>
@@ -15,6 +23,8 @@ export function MarkdownPreview({ text, className = '' }: { text: string; classN
     })
   }
   const lines = text.replace(/\r/g, '').split('\n'), blocks: any[] = []
+  const renumberRepeatedOneItems = (text.match(/^\s*1[.)]\s+/gm) || []).length > 1
+  let autoListNumber = 0
   let i = 0
   while (i < lines.length) {
     const line = lines[i]
@@ -47,6 +57,7 @@ export function MarkdownPreview({ text, className = '' }: { text: string; classN
     const unordered = line.match(/^\s*[-*+]\s+(.+)$/), ordered = line.match(/^\s*\d+[.)]\s+(.+)$/)
     if (unordered || ordered) {
       const isOrdered = !!ordered, items: any[] = []
+      const listStart = isOrdered ? renumberRepeatedOneItems ? autoListNumber + 1 : Number(ordered?.[0].match(/\d+/)?.[0] || 1) : undefined
       while (i < lines.length) {
         const match = lines[i].match(isOrdered ? /^\s*\d+[.)]\s+(.+)$/ : /^\s*[-*+]\s+(.+)$/)
         if (!match) break
@@ -54,7 +65,8 @@ export function MarkdownPreview({ text, className = '' }: { text: string; classN
         items.push(isOrdered ? <li key={items.length}>{inline(match[1])}</li> : <li key={items.length}>{task && <input type="checkbox" checked={task[1].toLowerCase() === 'x'} readOnly/>}{inline(task ? task[2] : match[1])}</li>)
         i++
       }
-      const List = isOrdered ? 'ol' : 'ul'; blocks.push(<List key={blocks.length}>{items}</List>); continue
+      if (isOrdered && renumberRepeatedOneItems) autoListNumber += items.length
+      const List = isOrdered ? 'ol' : 'ul'; blocks.push(<List key={blocks.length} start={listStart}>{items}</List>); continue
     }
     const para = [line]; i++
     while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|```|\s*>|\s*[-*+]\s|\s*\d+[.)]\s)/.test(lines[i])) para.push(lines[i++])
