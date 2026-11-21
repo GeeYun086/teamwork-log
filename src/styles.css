@@ -244,3 +244,29 @@
 .plan-week-add-inline{display:grid;gap:8px;margin-top:10px;padding:12px;border:1px solid #e3e7f2;border-radius:10px;background:#fafbff}.plan-week-date-field{display:grid;gap:6px}.plan-week-date-field span{font-size:12px;font-weight:650;color:#677286}.plan-week-date-field input{width:100%;min-height:40px;padding:8px 10px;border:1px solid #dfe4ee;border-radius:8px;background:white;color:#263044;font:inherit}.plan-week-add-inline>small{color:#798397;font-size:12px;line-height:1.45}.plan-week-add-inline>.button{width:100%;min-height:38px}
 
 .task-week-field{display:grid;gap:8px;min-width:0}.task-week-field>label{margin-bottom:0}
+
+/* Shared Markdown editor and compact previews for all team text fields */
+.markdown-field{display:grid;gap:7px;width:100%;min-width:0}
+.markdown-field-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#8b93a0;font-size:12px;font-weight:600}
+.markdown-field-toolbar .markdown-preview-toggle{margin:0;padding:5px 9px}
+.markdown-field>.markdown-preview{min-height:72px}
+.markdown-field>textarea{width:100%;min-height:72px}
+.request-card-markdown,.request-comment-markdown,.work-card-markdown{min-height:0;border:0;padding:0;background:transparent;line-height:1.6}
+.request-card-markdown{max-height:5.1em;overflow:hidden;color:#87909d;font-size:13px}
+.request-card-markdown p{margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.request-comment-markdown{color:#4d5664}
+.request-comment-markdown p{margin:.25em 0}
+.work-card-markdown{max-height:5.2em;overflow:hidden;font-size:13px;color:#87909d}
+.work-card-markdown p{margin:.25em 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.request-card-main{display:block;width:100%;padding:0;border:0;background:none;text-align:left;cursor:pointer}
+.request-card-main:focus-visible{outline:3px solid #93a4ff;outline-offset:3px;border-radius:6px}
+.request-detail-body>.markdown-preview{min-height:0}
+.request-comment-edit-form .markdown-field,.request-comment-form .markdown-field{flex:1}
+.request-row-markdown,.report-request-markdown,.announcement-preview-markdown,.announcement-body{min-height:0;border:0;padding:0;background:transparent}
+.request-row-markdown{font-size:12px;line-height:1.45;color:#8b93a0;max-height:2.9em;overflow:hidden}
+.request-row-markdown p{margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.report-request-markdown{font-size:12px;line-height:1.45;color:#87909d;max-height:4.35em;overflow:hidden}
+.report-request-markdown p{margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.announcement-preview-markdown{font-size:13px;color:#87909d;line-height:1.5;max-height:4.5em;overflow:hidden}
+.announcement-preview-markdown p{margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.announcement-body{line-height:1.75}

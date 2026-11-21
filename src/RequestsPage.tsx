@@ -1,4 +1,5 @@
 import { ArrowRight, Clock3, MessageSquareText, Plus, Users } from 'lucide-react'
+import { MarkdownPreview } from './Markdown'
 
 type RequestItem = { id: string; task_id: string | null; requester_id: string; assignee_id: string; body: string; priority: string; due_date: string | null; status: string; created_at: string }
 type Member = { user_id: string; display_name: string }
@@ -34,10 +35,10 @@ export default function RequestsPage({ requests, allCount, allLabel, pendingCoun
       const high = request.priority === '높음'
       return <article className="request-card" key={request.id}>
         <div className="request-card-head"><span className={`priority-pill ${high ? 'high' : ''}`}>{request.priority} 우선순위</span><span className={`request-state state-${request.status}`}>{request.status}</span></div>
-        <button type="button" className="request-card-main" onClick={() => onOpen(request)}>
-          <h2>{taskTitle}</h2><p>{request.body}</p>
+        <div role="button" tabIndex={0} className="request-card-main" onClick={() => onOpen(request)} onKeyDown={event => { if(event.key==='Enter'||event.key===' '){event.preventDefault();onOpen(request)} }}>
+          <h2>{taskTitle}</h2><MarkdownPreview text={request.body} className="request-card-markdown"/>
           <span className="request-open-hint">요청 내용 자세히 보기 <ArrowRight size={14}/></span>
-        </button>
+        </div>
         <div className="request-context"><span><Users size={14}/>{person(request.requester_id)} → {person(request.assignee_id)}</span><span><Clock3 size={14}/>{new Date(request.created_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>{request.due_date && <span>희망 완료일 {request.due_date}</span>}</div>
       </article>
     })}{!requests.length && <div className="empty-state"><MessageSquareText size={28}/><b>{scope === 'all' ? '팀 수정 요청이 없어요' : scope === 'received' ? '받은 수정 요청이 없어요' : '보낸 수정 요청이 없어요'}</b><span>{scope === 'all' ? '팀원이 요청을 등록하면 여기에 표시됩니다.' : scope === 'received' ? '팀원이 나에게 요청을 보내면 여기에 표시됩니다.' : '새 수정 요청을 보내면 여기에서 상태를 확인할 수 있어요.'}</span></div>}</div>
