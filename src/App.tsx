@@ -158,7 +158,7 @@ async function saveRequest(e:any){e.preventDefault();const fd=new FormData(e.cur
  useEffect(()=>{
   if(reportDirty||loading||!team)return
   const selected=reports.find(r=>r.user_id===reportViewer&&r.work_date===reportDate)
-  if(reportViewer===me){const key=`${reportViewer}:${reportDate}`,draft=reportDraftSnapshots.current[key]||createDraft();reportDraftSnapshots.current[key]=draft;if(selected){setAsIs(selected.as_is);setToBe(selected.to_be)}else{setAsIs(draft.as_is);setToBe(draft.to_be)}}
+  if(reportViewer===me){const key=`${reportViewer}:${reportDate}`;if(selected){setAsIs(selected.as_is);setToBe(selected.to_be)}else{const draft=createDraft();reportDraftSnapshots.current[key]=draft;setAsIs(draft.as_is);setToBe(draft.to_be)}}
   else{setAsIs('');setToBe('')}
  },[reports,tasks,requests,me,reportDate,reportViewer,reportDirty,loading,team])
  async function saveReport(){if(isReportReadOnly)return toast('다른 팀원의 보고서는 조회만 할 수 있어요.');const row:any={team_id:team.id,user_id:me,work_date:reportDate,as_is:asIs,to_be:toBe,updated_at:new Date().toISOString()};if(demo)persistDemo({reports:[...reports.filter(r=>!(r.user_id===me&&r.work_date===reportDate)),{...row,id:'rp'}]});else{const {data,error}=await supabase!.from('reports').upsert(row,{onConflict:'team_id,user_id,work_date'}).select('id').single();if(error)return toast(error.message);await notifyTeamEvent('report',data.id);await loadData()}setReportDirty(false);toast('퇴근 보고서를 저장했어요.')}
