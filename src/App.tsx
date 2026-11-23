@@ -129,11 +129,11 @@ async function saveRequest(e:any){e.preventDefault();const fd=new FormData(e.cur
  const scheduleWeekLocked=scheduleEditMode==='weekly'&&scheduleWeek<=dateKey();
  const todayTasks=useMemo(()=>sortTasksByDeadline(tasks.filter(t=>t.owner_id===me)),[tasks,me]);
  // Reports are scoped to cards explicitly scheduled for the selected date.
- const reportTasks=useMemo(()=>sortTasksByDeadline(tasks.filter(t=>t.owner_id===reportViewer&&(t.due_date===reportDate||(reportDate===dateKey()&&!!t.due_date&&t.due_date<reportDate&&timestampDateKey(t.updated_at)===reportDate&&(!t.created_at||new Date(t.updated_at||'').getTime()>new Date(t.created_at).getTime()))))),[tasks,reportViewer,reportDate]);
+ const reportTasks=useMemo(()=>sortTasksByDeadline(tasks.filter(t=>{if(t.owner_id!==reportViewer)return false;if(t.due_date===reportDate)return true;if(reportDate!==dateKey())return false;const updatedToday=timestampDateKey(t.updated_at)===reportDate&&(!t.created_at||new Date(t.updated_at||'').getTime()>new Date(t.created_at).getTime());const createdTodayWithoutDue=!t.due_date&&timestampDateKey(t.created_at)===reportDate;return updatedToday||createdTodayWithoutDue})),[tasks,reportViewer,reportDate]);
  const reportTaskIds=new Set(reportTasks.map(t=>t.id));
  const reportRequests=requests.filter(r=>(r.requester_id===reportViewer||r.assignee_id===reportViewer)&&r.status!=='완료'&&(r.due_date===reportDate||(r.task_id!==null&&reportTaskIds.has(r.task_id))));
  const createDraft=()=>{
-  const currentTasks=reportTasks.filter(t=>t.due_date===reportDate)
+  const currentTasks=reportTasks.filter(t=>t.due_date===reportDate||(!t.due_date||t.due_date>reportDate))
   const carryoverTasks=reportTasks.filter(t=>!!t.due_date&&t.due_date<reportDate)
   const done=currentTasks.filter(t=>t.status==='완료')
   const active=currentTasks.filter(t=>t.status==='진행 중')
